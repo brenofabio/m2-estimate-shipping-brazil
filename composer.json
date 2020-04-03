@@ -1,0 +1,22 @@
+{
+    "name": "fineweb/module-simulateproductshipping",
+    "description": "Simulates all Shipping methods on the product page.",
+    "type": "magento2-module",
+    "license": "GPL-3.0",
+    "authors": [
+        {
+            "name": "Rone Clay Brasil",
+            "email": "roneclay@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Fineweb\\SimulateProductShipping\\": ""
+        },
+        "files": [
+            "registration.php"
+        ]
+    }
+}
