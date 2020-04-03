@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+/*
+ * @package     Fineweb_SimulateProductShipping
+ * @copyright   Copyright (C) 2020  Copyright (c) 2020 Fineweb (https://www.fineweb.com.br)
+ * @author      Rone Clay Brasil <roneclay@gmail.com>
+ */
+-->
+<page>
+    <body>
+        <referenceContainer name="product.info.form.content">
+            <block class="Fineweb\SimulateProductShipping\Block\Product\View" name="product.info.shipping" as="shipping" template="product/view/simulate-shipping.phtml" after="product.info.addtocart" />
+        </referenceContainer>
+    </body>
+</page>

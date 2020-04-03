@@ -1,0 +1,33 @@
+<?php
+/*
+ * @package     Fineweb_SimulateProductShipping
+ * @copyright   Copyright (C) 2020  Copyright (c) 2020 Fineweb (https://www.fineweb.com.br)
+ * @author      Rone Clay Brasil <roneclay@gmail.com>
+ */
+?>
+<div class="simulate-container">
+    <div class="block block-shipping-simulate">
+        <div class="block-title">
+            <span id="block-shipping-simulate-heading" role="heading" aria-level="2"><?= __('Calculate shipping'); ?></span>
+        </div>
+        <div class="block-content" aria-labelledby="block-shipping-simulate-heading">
+            <fieldset class="fieldset simulate" data-hasrequired="* Required Fields">
+                <div class="field note"><?= __('Enter the delivery zip code') ?></div>
+                <div class="field postcode">
+                    <label class="label" for="postcode"><span><?= _('Postcode') ?></span></label>
+                    <div class="control">
+                        <input name="simulate[postcode]" value="" autocomplete="off" id="postcode" type="text" class="input-text" title="<?= _('Postcode') ?>">
+                    </div>
+                </div>
+                <div class="actions-toolbar">
+                    <div class="primary">
+                        <button type="button" class="action simulate primary" name="btn-send" id="btn-send" title="<?= __('Simulate') ?>">
+                            <span><?= __('Simulate') ?></span>
+                        </button>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+    <input type="hidden" name="simulate[actionUrl]" value="<?= $block->getActionUrl() ?>">
+</div>
