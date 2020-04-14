@@ -32,6 +32,7 @@ use Magento\Framework\View\Element\Template\Context;
  */
 class View extends Template
 {
+    const FINE_ACTION_URL = 'fineweb/simulate/index';
 
     /**
      * Constructor
@@ -52,7 +53,6 @@ class View extends Template
      */
     public function getActionUrl()
     {
-        //Your block code
-        return __('Hello Developer! This how to get the storename: %1 and this is the way to build a url: %2', $this->_storeManager->getStore()->getName(), $this->getUrl('contacts'));
+        return $this::FINE_ACTION_URL;
     }
 }

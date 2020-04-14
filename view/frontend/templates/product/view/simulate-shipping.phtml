@@ -14,20 +14,22 @@
             <fieldset class="fieldset simulate" data-hasrequired="* Required Fields">
                 <div class="field note"><?= __('Enter the delivery zip code') ?></div>
                 <div class="field postcode">
-                    <label class="label" for="postcode"><span><?= _('Postcode') ?></span></label>
+                    <label class="label" for="postcode"><span><?= __('Postcode') ?></span></label>
                     <div class="control">
-                        <input name="simulate[postcode]" value="" autocomplete="off" id="postcode" type="text" class="input-text" title="<?= _('Postcode') ?>">
+                        <input name="simulate[postcode]" value="" autocomplete="off" id="postcode" type="text" class="input-text" title="<?= __('Postcode') ?>" placeholder="<?= __('Type your Postcode (just numbers)') ?>">
                     </div>
                 </div>
                 <div class="actions-toolbar">
                     <div class="primary">
-                        <button type="button" class="action simulate primary" name="btn-send" id="btn-send" title="<?= __('Simulate') ?>">
-                            <span><?= __('Simulate') ?></span>
+                        <button type="button" class="action simulate primary" name="btn-simulate" id="btn-simulate" title="<?= __('Estimate shipping') ?>">
+                            <span><?= __('Estimate shipping') ?></span>
                         </button>
+                        <a href="http://www.buscacep.correios.com.br/sistemas/buscacep/BuscaCepEndereco.cfm" target="_blank" title="<?= __('I do not know the postcode') ?>"><?= __('I do not know the postcode') ?></a>
                     </div>
                 </div>
             </fieldset>
+            <ul id="shipping-estimate-results"></ul>
         </div>
     </div>
-    <input type="hidden" name="simulate[actionUrl]" value="<?= $block->getActionUrl() ?>">
+    <input type="hidden" name="simulate[actionUrl]" value="<?= $this->getUrl($block->getActionUrl()) ?>">
 </div>

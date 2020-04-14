@@ -21,12 +21,16 @@
 
 namespace Fineweb\SimulateProductShipping\Controller\Simulate;
 
+use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
+use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Json\Helper\Data;
+use Magento\Framework\Pricing\Helper\Data as DataAlias;
 use Magento\Framework\View\Result\PageFactory;
+use Magento\Quote\Model\QuoteFactory;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -36,9 +40,13 @@ use Psr\Log\LoggerInterface;
  */
 class Index extends Action
 {
-
     protected $resultPageFactory;
     protected $jsonHelper;
+    protected $request;
+    protected $product_repository;
+    protected $quote;
+    protected $pricingHelper;
+    protected $logger;
 
     /**
      * Constructor
@@ -47,16 +55,28 @@ class Index extends Action
      * @param PageFactory $resultPageFactory
      * @param Data $jsonHelper
      * @param LoggerInterface $logger
+     * @param RequestInterface $request
+     * @param ProductRepositoryInterface $product_repository
+     * @param QuoteFactory $quote
+     * @param DataAlias $pricingHelper
      */
     public function __construct(
         Context $context,
         PageFactory $resultPageFactory,
         Data $jsonHelper,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        RequestInterface $request,
+        ProductRepositoryInterface $product_repository,
+        QuoteFactory $quote,
+        DataAlias $pricingHelper
     ) {
         $this->resultPageFactory = $resultPageFactory;
         $this->jsonHelper = $jsonHelper;
         $this->logger = $logger;
+        $this->request = $request;
+        $this->product_repository = $product_repository;
+        $this->quote = $quote;
+        $this->pricingHelper = $pricingHelper;
         parent::__construct($context);
     }
 
@@ -67,8 +87,39 @@ class Index extends Action
      */
     public function execute()
     {
+        $_params = $this->request->getPostValue();
+        $qty       = $_params['qty'];
+        $response = [];
+
         try {
-            return $this->jsonResponse('your response');
+            $_product = $this->product_repository->getById($_params['product']);
+
+            $quote = $this->quote->create();
+            $quote->addProduct($_product, $qty);
+            $quote->getShippingAddress()->setCountryId('BR');
+            $quote->getShippingAddress()->setPostcode($_params['simulate']['postcode']);
+            $quote->getShippingAddress()->setCollectShippingRates(true);
+            $quote->getShippingAddress()->collectShippingRates();
+            $rates = $quote->getShippingAddress()->getShippingRatesCollection();
+
+            if (count($rates)>0) {
+                $shipping_methods = [];
+
+                foreach ($rates as $rate) {
+                    $_message = !$rate->getErrorMessage() ? "" : $rate->getErrorMessage();
+                    $shipping_methods[$rate->getCarrierTitle()][] = [
+                        'title' => $rate->getMethodTitle(),
+                        'price' => $this->pricingHelper->currency($rate->getPrice()),
+                        'message' => $_message,
+                    ];
+                }
+
+                $response = $shipping_methods;
+            } else {
+                $response['error']['message'] = __('There is no shipping method available at this time.');
+            }
+
+            return $this->jsonResponse($response);
         } catch (LocalizedException $e) {
             return $this->jsonResponse($e->getMessage());
         } catch (\Exception $e) {
@@ -80,6 +131,7 @@ class Index extends Action
     /**
      * Create json response
      *
+     * @param string $response
      * @return ResultInterface
      */
     public function jsonResponse($response = '')
@@ -89,4 +141,3 @@ class Index extends Action
         );
     }
 }
-
