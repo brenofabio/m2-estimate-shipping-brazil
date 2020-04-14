@@ -28,11 +28,12 @@ use Magento\Framework\View\Element\Template\Context;
 /**
  * Class View
  *
- * @package Fineweb\SimulateProductShipping\Block\Product
+ * Fineweb\SimulateProductShipping\Block\Product
  */
 class View extends Template
 {
     const FINE_ACTION_URL = 'fineweb/simulate/index';
+    const BUSCA_CEP_URL = 'http://www.buscacep.correios.com.br/sistemas/buscacep/BuscaCepEndereco.cfm';
 
     /**
      * Constructor
@@ -54,5 +55,14 @@ class View extends Template
     public function getActionUrl()
     {
         return $this::FINE_ACTION_URL;
+    }
+
+    /**
+     * @return string
+     * @throws NoSuchEntityException
+     */
+    public function getBuscaCepUrl()
+    {
+        return $this::BUSCA_CEP_URL;
     }
 }

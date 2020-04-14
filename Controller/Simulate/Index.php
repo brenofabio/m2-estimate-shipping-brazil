@@ -36,7 +36,7 @@ use Psr\Log\LoggerInterface;
 /**
  * Class Index
  *
- * @package Fineweb\SimulateProductShipping\Controller\Simulate
+ * Fineweb\SimulateProductShipping\Controller\Simulate
  */
 class Index extends Action
 {
