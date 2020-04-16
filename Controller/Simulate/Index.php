@@ -93,9 +93,24 @@ class Index extends Action
 
         try {
             $_product = $this->product_repository->getById($_params['product']);
-
             $quote = $this->quote->create();
-            $quote->addProduct($_product, $qty);
+            $options = new \Magento\Framework\DataObject();
+            $options->setProduct($_product->getId());
+            $options->setQty($qty);
+
+            if (!strcmp($_product->getTypeId(), 'configurable')) {
+                $superAttribute = $this->getRequest()->getParam('super_attribute');
+
+                $options->setSuperAttribute($superAttribute);
+            } elseif (!strcmp($_product->getTypeId(), 'bundle')) {
+                $bundleOption    = $this->getRequest()->getParam('bundle_option');
+                $bundleOptionQty = $this->getRequest()->getParam('bundle_option_qty');
+
+                $options->setBundleOption($bundleOption);
+                $options->setBundleOptionQty($bundleOptionQty);
+            }
+
+            $quote->addProduct($_product, $options);
             $quote->getShippingAddress()->setCountryId('BR');
             $quote->getShippingAddress()->setPostcode($_params['simulate']['postcode']);
             $quote->getShippingAddress()->setCollectShippingRates(true);
