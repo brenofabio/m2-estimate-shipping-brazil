@@ -1,5 +1,5 @@
 {
-    "name": "fineweb/module-simulateproductshipping",
+    "name": "brenofabio/magento2-productpageshipping",
     "description": "Simulates all Shipping methods on the product page.",
     "type": "magento2-module",
     "license": "GPL-3.0",
