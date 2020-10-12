@@ -29,7 +29,6 @@ use Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Json\Helper\Data;
 use Magento\Framework\Pricing\Helper\Data as DataAlias;
-use Magento\Framework\View\Result\PageFactory;
 use Magento\Quote\Model\QuoteFactory;
 use Psr\Log\LoggerInterface;
 
@@ -40,7 +39,6 @@ use Psr\Log\LoggerInterface;
  */
 class Index extends Action
 {
-    protected $resultPageFactory;
     protected $jsonHelper;
     protected $request;
     protected $product_repository;
@@ -52,7 +50,6 @@ class Index extends Action
      * Constructor
      *
      * @param Context $context
-     * @param PageFactory $resultPageFactory
      * @param Data $jsonHelper
      * @param LoggerInterface $logger
      * @param RequestInterface $request
@@ -62,7 +59,6 @@ class Index extends Action
      */
     public function __construct(
         Context $context,
-        PageFactory $resultPageFactory,
         Data $jsonHelper,
         LoggerInterface $logger,
         RequestInterface $request,
@@ -70,7 +66,6 @@ class Index extends Action
         QuoteFactory $quote,
         DataAlias $pricingHelper
     ) {
-        $this->resultPageFactory = $resultPageFactory;
         $this->jsonHelper = $jsonHelper;
         $this->logger = $logger;
         $this->request = $request;
@@ -114,6 +109,9 @@ class Index extends Action
             $quote->getShippingAddress()->setCountryId('BR');
             $quote->getShippingAddress()->setPostcode($_params['simulate']['postcode']);
             $quote->getShippingAddress()->setCollectShippingRates(true);
+
+            $quote->collectTotals();
+            $quote->getShippingAddress()->getGroupedAllShippingRates();
             $quote->getShippingAddress()->collectShippingRates();
             $rates = $quote->getShippingAddress()->getShippingRatesCollection();
 
@@ -133,14 +131,14 @@ class Index extends Action
             } else {
                 $response['error']['message'] = __('There is no shipping method available at this time.');
             }
-
-            return $this->jsonResponse($response);
         } catch (LocalizedException $e) {
-            return $this->jsonResponse($e->getMessage());
+            $response['error']['message'] = $e->getMessage();
         } catch (\Exception $e) {
             $this->logger->critical($e);
-            return $this->jsonResponse($e->getMessage());
+            $response['error']['message'] = $e->getMessage();
         }
+
+        return $this->jsonResponse($response);
     }
 
     /**
